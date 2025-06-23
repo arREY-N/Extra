@@ -47,31 +47,6 @@ export function LineChart(props){
     );
 }
 
-export function PieChart(props){
-    return (
-        <>
-            <ChartStyle>
-                <div className="chart">
-                    <img src="https://placehold.co/250" alt="" />
-                </div>
-
-                <div className="info">
-                    <Legend 
-                        $color = 'red'
-                        $text = 'Category 1'/>
-                    
-                    <Legend 
-                        $color = 'green'
-                        $text = 'Category 2'/>
-
-                    <Legend 
-                        $text = 'Category 3'/>
-                </div>
-            </ChartStyle>
-        </>
-    );
-}
-
 export function Legend(props){
     return(
         <>

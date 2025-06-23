@@ -1,8 +1,9 @@
 import './App.css';
 import { GridContainer, GridItem, BorderedGridItem } from './Containers';
 import { Pill } from './Pill'
-import { LineChart, PieChart } from './Visual';
+import { LineChart, ChartStyle,Legend } from './Visual';
 import { TransactionBox, Entry } from './Transaction';
+import CategoryPie from './Charts';
 
 function App(){
     return(
@@ -38,7 +39,22 @@ function App(){
                 </BorderedGridItem>
 
                 <BorderedGridItem $spanCols = {4}>
-                    <PieChart/>
+                    <CategoryPie/>
+                    <ChartStyle>
+                        <div className="info">
+                            <Legend 
+                                $color = 'red'
+                                $text = 'Category 1'/>
+                                        
+                            <Legend 
+                                $color = 'green'
+                                $text = 'Category 2'/>
+                    
+                            <Legend 
+                                $color = 'blue'
+                                $text = 'Category 3'/>
+                        </div>
+                    </ChartStyle>
                 </BorderedGridItem>
 
                 <TransactionBox>                                    
