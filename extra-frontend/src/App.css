@@ -1,17 +1,28 @@
 :root{
-    --wireframe: 1px solid rgba(0, 0, 255, 0.07);
+    --wireframe: 1px solid hsla(0, 0%, 90%, .9);
     --padding: 10px;
     --radius: 10px;
-    --box-shadow: 5px 5px 5px hsla(0, 0%, 90%, 0.4);
+    --box-shadow: 5px 5px 5px hsla(0, 0%, 90%, .9);
 
     --black: #333333;
+    --white: #fafafa;
+    --highlight: #7caee1;
 }
 
 body{
     color: var(--black);
-    max-width: 900px;
+    max-width: 70vw;
     margin: 10px auto;
-    /* border: var(--wireframe); */
+    background-color: hsla(0, 0%, 95%, .9);;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+    @media screen and (max-width: 700px) {
+        max-width: 90vw;
+    }
+}
+
+*{
+    margin: 0;
 }
 
 .grid-item{
@@ -20,4 +31,10 @@ body{
     align-items: center;
     justify-content: center; 
     */
+}
+
+.calender{
+    align-self: self-start;
+    height: 100px;
+    border: var(--wireframe);
 }

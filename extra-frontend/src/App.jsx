@@ -1,83 +1,80 @@
 import './App.css';
-import styled from 'styled-components';
-
-export const GridContainer = styled.div`
-    display: grid;
-    grid-template-columns: repeat(${props => props.$cols || 12 }, 1fr);
-    gap: 20px;
-    margin: 10px auto;
-
-    @media screen and (max-width: 1000px) {
-        grid-template-columns: repeat(1, 1fr);
-    }
-`
-
-export const GridItem = styled.div`
-    grid-column: span ${props => props.$cols || 12 } / auto; 
-    grid-row: span ${props => props.$rows || 1 } / auto;
-
-    display: grid;
-    grid-template-columns: repeat(${props => props.$cols || 12 }, 1fr);
-    gap: 20px;
-
-`
-    
-export const BorderedGridItem = styled(GridItem)`
-    padding: var(--padding);
-    border: var(--wireframe);
-    border-radius: var(--radius);
-    box-shadow: var(--box-shadow);
-`
+import { GridContainer, GridItem, BorderedGridItem } from './Containers';
+import { Pill } from './Pill'
+import { LineChart, PieChart } from './Visual';
+import { TransactionBox, Entry } from './Transaction';
 
 function App(){
     return(
         <>
             <GridContainer>
                 <GridItem>
-                    <h1>Header</h1>
+                    <h1>Dashboard</h1>
                 </GridItem>
 
-                <BorderedGridItem $cols = {6}>
-                    a
+                <BorderedGridItem $spanCols = {4} >
+                    <Pill 
+                        $img={'https://placehold.co/70'} 
+                        $title = {'Balance'}
+                        $value = {'P XXX,XXX.XX'}/>
                 </BorderedGridItem>
 
-                <BorderedGridItem $cols = {6} $rows = {2}>
-                    b
+                <BorderedGridItem $spanCols = {4}>
+                    <Pill 
+                        $img={'https://placehold.co/70'} 
+                        $title = {'Balance'}
+                        $value = {'P XXX,XXX.XX'}/>
                 </BorderedGridItem>
 
-                <BorderedGridItem $cols = {3}>
-                    c
+                <BorderedGridItem $spanCols = {4}>
+                    <Pill 
+                        $img={'https://placehold.co/70'} 
+                        $title = {'Balance'}
+                        $value = {'P XXX,XXX.XX'}/>
                 </BorderedGridItem>
-
-                <BorderedGridItem $cols = {3}>
-                    d
-                </BorderedGridItem>
-
-                <GridItem>
-                    <h1>Header</h1>
-                </GridItem>
-
-                <GridItem $cols = {12}>
                 
-                    <BorderedGridItem $cols = {1} >
-                        e
-                    </BorderedGridItem>
-                
-                    <BorderedGridItem $cols = {6}>
-                        f
-                    </BorderedGridItem>
+                <BorderedGridItem $spanCols = {8}>
+                    <LineChart/>
+                </BorderedGridItem>
 
-                    <BorderedGridItem $cols = {2}>
-                        g
-                    </BorderedGridItem>
-                    <BorderedGridItem $cols = {2}>
-                        h
-                    </BorderedGridItem>
-                    <BorderedGridItem $cols = {1}>
-                        i
-                    </BorderedGridItem>
-                
-                </GridItem>
+                <BorderedGridItem $spanCols = {4}>
+                    <PieChart/>
+                </BorderedGridItem>
+
+                <TransactionBox>                                    
+                    <Entry 
+                        $name = 'Entry 1'
+                        $date = {new Date().toLocaleDateString()}
+                        $amount = {100}/>
+                    <Entry 
+                        $name = 'Entry 2'
+                        $date = {new Date().toLocaleDateString()}
+                        $amount = {1000}/>
+                    <Entry 
+                        $name = 'Entry 3'
+                        $date = {new Date().toLocaleDateString()}
+                        $amount = {1000}/>
+                    <Entry 
+                        $name = 'Entry 4'
+                        $date = {new Date().toLocaleDateString()}
+                        $amount = {1000}/>
+                    <Entry 
+                        $name = 'Entry 5'
+                        $date = {new Date().toLocaleDateString()}
+                        $amount = {1000}/>
+                </TransactionBox>
+
+                <BorderedGridItem 
+                    style={
+                        {
+                            alignSelf: 'start',
+                            aspectRatio: '1 / 1',
+                            position: 'sticky',
+                            top: '10px'
+                        }
+                    } 
+                    $spanCols = {4}>
+                </BorderedGridItem>
             </GridContainer>
         </>
     );
