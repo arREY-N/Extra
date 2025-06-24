@@ -10,7 +10,9 @@ import { useState, useEffect } from 'react';
 function App(){
 
     const [transactions, setTransactions] = useState([]);
-    const [expenses, setExpenses] = useState();
+    const [expenses, setExpenses] = useState(0);
+    const [income, setIncome] = useState(0);
+    const [balance, setBalance] = useState(0);
 
     const format = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -55,21 +57,21 @@ function App(){
                     <Pill 
                         $img={'https://placehold.co/70'} 
                         $title = {'Balance'}
-                        $value = {'P XXX,XXX.XX'}/>
+                        $value = {`P ${balance.toFixed(2)}`}/>
                 </BorderedGridItem>
 
                 <BorderedGridItem $spanCols = {4}>
                     <Pill 
                         $img={'https://placehold.co/70'} 
                         $title = {'Total Expense'}
-                        $value = {`P ${expenses}`}/>
+                        $value = {`P ${expenses.toFixed(2)}`}/>
                 </BorderedGridItem>
 
                 <BorderedGridItem $spanCols = {4}>
                     <Pill 
                         $img={'https://placehold.co/70'} 
-                        $title = {'Balance'}
-                        $value = {'P XXX,XXX.XX'}/>
+                        $title = {'Income'}
+                        $value = {`P ${income.toFixed(2)}`}/>
                 </BorderedGridItem>
                 
                 <BorderedGridItem $spanCols = {8}>
@@ -84,6 +86,7 @@ function App(){
                     {
                         transactions.map((transaction, index) => (
                             <Entry 
+                                key = {index}
                                 $name = {transaction.item}
                                 $date = {transaction.transactionDate}
                                 $amount = {transaction.amount}
