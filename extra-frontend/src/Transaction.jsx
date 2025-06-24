@@ -79,7 +79,7 @@ export function Entry(props){
                 </div>
                 
                 <div className='amount'>
-                   {props.$flow === 'in' ? '+' : '-' } P {props.$amount}
+                   {props.$flow === '1s' ? '+' : '-' } P {props.$amount.toFixed(2)}
                 </div>
             </Row>
         </>
