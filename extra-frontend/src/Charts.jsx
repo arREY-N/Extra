@@ -9,31 +9,28 @@ import {
     Customized 
 } from 'recharts';
 
-const data = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300.56 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group C', value: 300 }
-];
 
 const COLORS = ['red', 'green', 'blue', '#FF8042'];
 
-export default function CategoryPie() {
+export default function CategoryPie({data}) {
     return (
         <ResponsiveContainer width='100%' height='100%'>
-            <PieChart width={'450px'} height={'450px'}>
-                <Legend/>
+            <PieChart>
+                <Legend
+                    verticalAlign='bottom'
+                    align='center'
+                    wrapperStyle={{marginTop: 0}} 
+                />
                 <Pie
                     activeShape={renderActiveShape}
                     data={data}
-                    innerRadius={45}
-                    outerRadius={70}
+                    innerRadius={80}
+                    outerRadius={100}
                     paddingAngle={5}
                     dataKey="value"
                     legendType='circle'
                 >
-                    {data.map((entry, index) => (
+                    {data.map((_, index) => (
                         <Cell 
                             key={`cell-${index}`} 
                             fill={COLORS[index % COLORS.length]}
@@ -60,10 +57,17 @@ const renderActiveShape = (props) => {
 
     return (
         <g>
-        <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} fontWeight={'bold'}>
-            {`${(percent * 100).toFixed(2)}%`}
+        <text x={cx} y={cy} dy={-20} textAnchor="middle" fill={'var(--secondary-color)'} fontWeight={'bold'}>
+            {`${payload.name}`}
+        </text>
+        <text x={cx} y={cy} dy={35} textAnchor="middle" fill={'var(--secondary-color)'} fontWeight={'bold'}>
+            {`(${(percent * 100).toFixed(2)}%)`}
+        </text>
+        <text x={cx} y={cy} dy={10} textAnchor="middle" fill={fill} fontWeight={'bold'} fontSize={'1.5rem'}>
+            {`P${value.toFixed(2)}`}
         </text>
         <Sector
+            key={`sector-${payload.id}`}
             cx={cx}
             cy={cy}
             innerRadius={innerRadius}
@@ -72,15 +76,7 @@ const renderActiveShape = (props) => {
             endAngle={endAngle}
             fill={fill}
         />
-        <Sector
-            cx={cx}
-            cy={cy}
-            startAngle={startAngle}
-            endAngle={startAngle}
-            innerRadius={0}
-            outerRadius={innerRadius-2}
-            fill={fill}
-        />
+        
         <text 
             x={ex + (cos >= 0 ? 1 : -1)} 
             y={ey} 
@@ -89,8 +85,36 @@ const renderActiveShape = (props) => {
             fill={fill}
             fontSize={'0.9rem'}
         >
-            {`P${value.toFixed(2)}`}
         </text>
         </g>
     );
 };
+
+import { ResponsivePie } from '@nivo/pie'
+
+const MyPie = ({ data /* see data tab */ }) => (
+    <ResponsivePie /* or Pie for fixed dimensions */
+        data={data}
+        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+        innerRadius={0.5}
+        padAngle={0.6}
+        cornerRadius={2}
+        activeOuterRadiusOffset={8}
+        arcLinkLabelsSkipAngle={10}
+        arcLinkLabelsTextColor="#333333"
+        arcLinkLabelsThickness={2}
+        arcLinkLabelsColor={{ from: 'color' }}
+        arcLabelsSkipAngle={10}
+        arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
+        legends={[
+            {
+                anchor: 'bottom',
+                direction: 'row',
+                translateY: 56,
+                itemWidth: 100,
+                itemHeight: 18,
+                symbolShape: 'circle'
+            }
+        ]}
+    />
+)
