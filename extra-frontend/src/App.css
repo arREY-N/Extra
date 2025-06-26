@@ -1,40 +1,89 @@
-:root{
-    --wireframe: 1px solid hsla(0, 0%, 90%, .9);
-    --padding: 10px;
-    --radius: 10px;
-    --box-shadow: 5px 5px 5px hsla(0, 0%, 90%, .9);
-
-    --black: #333333;
-    --white: #fafafa;
-    --highlight: #7caee1;
+.main-grid{
+    margin-top: 20px !important;
 }
 
-body{
-    color: var(--black);
-    max-width: 70vw;
-    margin: 10px auto;
-    background-color: hsla(0, 0%, 95%, .9);;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
-    @media screen and (max-width: 700px) {
-        max-width: 90vw;
-    }
-}
-
-*{
-    margin: 0;
-}
-
-.grid-item{
-    /* pass this to specific grid-item type 
+.navigation-grid{
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center; 
-    */
 }
 
-.calender{
-    align-self: self-start;
-    height: 100px;
-    border: var(--wireframe);
+.summary-pill{
+    display: flex;
+    flex-direction: column;
+}
+
+/* .balance-pill{
+    background-color: var(--muted-highlight-a) !important;
+}
+
+.expense-pill{
+    background-color: var(--muted-highlight-b) !important;
+}
+
+.income-pill{
+    background-color: var(--muted-highlight-b) !important;
+} */
+
+.greeting{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.greeting-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--padding);
+}
+
+.greeting-text > h2{
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.greeting-text > h3{
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.icon img{
+    border-radius: 50%;
+}
+
+.chart, .monthly-limit{
+    justify-items: center;
+}
+
+.add-transaction {
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    color: var(--secondary-color);
+}
+
+.add-transaction-btn{
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+    border: none;
+    background-color: var(--container-color);
+    color: var(--secondary-color);
+}
+
+.add-transaction:hover,
+.add-transaction:focus-within {
+    background-color: var(--highlight-b);
+    color: var(--primary-color);
+}
+
+.add-transaction:hover .add-transaction-btn,
+.add-transaction:focus-within .add-transaction-btn {
+    background-color: var(--highlight-b);
+    color: var(--primary-color);
 }
