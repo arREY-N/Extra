@@ -10,7 +10,8 @@ export const Row = styled.div`
     .icon{
         width: 50px;
         aspect-ratio: 1 / 1;
-        border: var(--wireframe);
+        border: 1px solid ${props => props.$flow == 1 ? 'var(--highlight-a)' : 'var(--highlight-b)'};
+        background-color: ${props => props.$flow == 1 ? 'var(--muted-highlight-a)' : 'var(--muted-highlight-b)'};
         border-radius: 50%;
         margin-right: 10px;
     }
@@ -22,14 +23,15 @@ export const Row = styled.div`
         
     .name{
         font-size: 1.2rem;
-        font-weight: bold;
+        font-weight: 500;
     }
 
     .amount{
         flex: 1;
         text-align: end;
         font-size: 1.2rem;
-        font-weight: bold;
+        font-weight: 500;
+        color: ${props => props.$flow == 1 ? 'var(--highlight-a)' : 'var(--highlight-b)'};
     }
 `
 
@@ -66,7 +68,7 @@ export function TransactionBox(props){
 export function Entry(props){
     return(
         <>
-            <Row>
+            <Row $flow = {props.$flow}>
                 <div className='icon'/>
                 
                 <div className='item'>
@@ -79,7 +81,7 @@ export function Entry(props){
                 </div>
                 
                 <div className='amount'>
-                   {props.$flow === '1s' ? '+' : '-' } P {props.$amount.toFixed(2)}
+                   {props.$flow == 1 ? '-' : '+' } P {props.$amount.toFixed(2)}
                 </div>
             </Row>
         </>
