@@ -1,29 +1,34 @@
-.main-grid{
-    margin-top: 20px !important;
+
+
+nav{
+    background-color: var(--container-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .navigation-grid{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 20px;
+}
+
+@media screen and (max-width: 1200px) {
+    .nav-links > div{
+        display: none;;
+    }    
 }
 
 .summary-pill{
     display: flex;
     flex-direction: column;
 }
-
-/* .balance-pill{
-    background-color: var(--muted-highlight-a) !important;
-}
-
-.expense-pill{
-    background-color: var(--muted-highlight-b) !important;
-}
-
-.income-pill{
-    background-color: var(--muted-highlight-b) !important;
-} */
 
 .greeting{
     display: flex;
@@ -86,4 +91,26 @@
 .add-transaction:focus-within .add-transaction-btn {
     background-color: var(--highlight-b);
     color: var(--primary-color);
+}
+
+.report-history{
+    align-self: flex-start;
+    height: auto;
+}
+
+.add-transaction {
+    top: 10px;  
+    position: sticky;
+    margin-bottom: 20px;
+}
+
+.see-all{
+    align-self: center;
+    justify-self: flex-end;
+}
+
+.see-all:hover {
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
 }

@@ -9,6 +9,7 @@ export const Row = styled.div`
 
     .icon{
         width: 50px;
+        height: auto;
         aspect-ratio: 1 / 1;
         border: 1px solid ${props => props.$flow == 1 ? 'var(--highlight-a)' : 'var(--highlight-b)'};
         background-color: ${props => props.$flow == 1 ? 'var(--muted-highlight-a)' : 'var(--muted-highlight-b)'};
