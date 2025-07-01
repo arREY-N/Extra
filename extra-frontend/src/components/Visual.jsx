@@ -35,18 +35,6 @@ export const LegendStyle = styled.div`
     }
 ` 
 
-export function LineChart(props){
-    return(
-        <>
-            <ChartStyle>
-                <div className="chart">
-                    <img src="https://placehold.co/550x250" alt="" />
-                </div>
-            </ChartStyle>
-        </>
-    );
-}
-
 export function Legend(props){
     return(
         <>

@@ -2,9 +2,9 @@ import '../styles/App.css';
 import { GridContainer, GridItem, BorderedGridItem } from './Containers';
 import { Pill, ReportPill } from './Pill'
 import { Entry } from './Transaction';
-import CategoryPie from './Charts';
+import { CategoryPie, DailyChart } from './Charts';
 import { useState, useEffect, useMemo } from 'react';
-import { sampleTransactions, format } from '../SampleData';
+import { sampleTransactions, format, lineFormat } from '../SampleData';
 import NavBar from './NavBar';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import TrendingUpIcon from '@mui/icons-material/Payment';
@@ -12,13 +12,37 @@ import TrendingDownIcon from '@mui/icons-material/Money';
 import DayIcon from '@mui/icons-material/WbSunnyOutlined';
 import NightIcon from '@mui/icons-material/NightlightRounded';
 
+function calculateIQR(data) {
+    // Helper to find the percentile
+    const getQuartile = (arr, q) => {
+        const pos = (arr.length - 1) * q;
+        const base = Math.floor(pos);
+        const rest = pos - base;
+        if ((arr[base + 1] !== undefined)) {
+            return arr[base] + rest * (arr[base + 1] - arr[base]);
+        } else {
+            return arr[base];
+        }
+    };
+
+    const q1 = getQuartile(data, 0.25);
+    const q3 = getQuartile(data, 0.75);
+    const iqr = q3 - q1;
+
+    const lowerBound = q1 - 1.5 * iqr;
+    const upperBound = q3 + 1.5 * iqr;
+
+    const filtered = data.filter(x => x >= lowerBound && x <= upperBound);
+    
+    return filtered.reduce((sum, val) => sum + val, 0) / filtered.length;
+}
 
 
 function App(){
     const [transactions, setTransactions] = useState(sampleTransactions);
     const [limit, setLimit] = useState(0.75);
     
-    const [date, setDate] = useState(new Date().toLocaleDateString('en-US', format));
+    const [date, setDate] = useState(new Date().toLocaleString('en-US', format));
     const [greeting, setGreeting] = useState("Good day");
     const [isNight, setIsNight] = useState(false);
     const [username, setUsername] = useState("Guest");
@@ -35,6 +59,44 @@ function App(){
 
     const pieData = Object.entries(categoryData).map(([name, value]) => ({ name, value })); 
 
+    const msInDay = 24 * 60 * 60 * 1000;
+    const today = new Date();
+
+    const dailyData = (() => {
+        const allDates = Array.from({ length: 7 }, (_, i) => {
+            const date = new Date(today - i * msInDay);
+            return date.toLocaleDateString('en-US', lineFormat);
+        });
+
+        allDates.reverse();
+
+        const prepopulatedData = allDates.reduce((acc, dateKey) => {
+            acc[dateKey] = 0;
+            return acc;
+        }, {});
+
+        if (transactions && transactions.length > 0) {
+            transactions
+                .filter(entry => entry.flow === 1 && entry.category)
+                .forEach(entry => {
+                    const entryDate = entry.transactionDate instanceof Date 
+                        ? entry.transactionDate 
+                        : new Date(entry.transactionDate);
+
+                    const dateKey = entryDate.toLocaleDateString('en-US', lineFormat);
+                    const amount = typeof entry.amount === 'number' ? entry.amount : parseFloat(entry.amount);
+
+                    if (!isNaN(amount) && prepopulatedData[dateKey] !== undefined) {
+                        prepopulatedData[dateKey] += amount;
+                    }
+                });
+        }
+
+        return prepopulatedData;
+    })();
+
+    const lineData = Object.entries(dailyData).map(([Date, Amount]) => ({ Date, Amount }));
+    
     useEffect(() => {
         const interval = setInterval(() => {
             setDate(d => new Date().toLocaleDateString('en-US', format));
@@ -67,7 +129,10 @@ function App(){
     useEffect(() => {
         setGreeting(() => {
             const currentHour = new Date().getHours();
-            return currentHour < 12 ? "Good morning" : currentHour < 18 ? "Good afternoon" : "Good evening";
+            
+            return (currentHour > 6 && currentHour < 12) ? "Good morning" : 
+                (currentHour >= 12 && currentHour < 18) ? "Good afternoon" : 
+                "Good evening";
         });
  
         setIsNight(() => {
@@ -98,10 +163,23 @@ function App(){
         () => (expenses / (income * limit)) * 100,
         [expenses, income, limit]
     );
+    
+    const amount = transactions
+        .filter(transaction => transaction.flow === 1)
+        .map(item => item.amount);
+        
+    const sorted = [...amount].sort((a,b) => a - b )
+
+    const averageExpense = useMemo(
+        () => {
+            return calculateIQR(sorted)
+        }, [transactions]
+    );
 
     return(
         <>
             <NavBar/>
+
             <GridContainer className='main-grid'>
                 <GridItem $spanCols = {12} style={{margin: '10px'}}>
                     <div className='greeting'>
@@ -120,6 +198,7 @@ function App(){
                         </div>
                     </div>    
                 </GridItem>
+            
                 <GridItem className='summary-grid' $spanCols = {9} $cols = {9}>
                     <BorderedGridItem className='balance-pill' $spanCols =  {3}>
                         <Pill 
@@ -145,30 +224,51 @@ function App(){
                             $color = {'var(--highlight-c)'} />
                     </BorderedGridItem>
 
-                    <BorderedGridItem $spanCols =  {6}>
-
+                    <BorderedGridItem $spanCols = {6} $cols = {1}>
+                        <GridItem $spanCols = {1} style={{marginTop: '10px', marginLeft: '10px'}}>
+                            <h2>7-Day Record</h2>
+                        </GridItem>
+                        <DailyChart data={lineData} />
                     </BorderedGridItem>
 
-                    <BorderedGridItem className='monthly-limit' $spanCols =  {3}>
-                        <div className='limit' style={{textAlign: 'center'}}>
-                            <div className='graphics'>
-                                <img src="https://placehold.co/250x120" alt="" />
-                            </div>
-                            <div className='info'>
-                                <h1>{limitStatus.toFixed(2)}%</h1>
-                                <p>of your monthly limit has been used!</p>
-                            </div>
-                        </div>
+                    <BorderedGridItem $spanCols = {3}  $cols = {1}>
+                        <GridItem $spanCols = {1} style={{marginTop: '10px', marginLeft: '10px'}}>
+                            <h2>Category Distribution</h2>
+                        </GridItem>
+                        <CategoryPie data={pieData}/>
                     </BorderedGridItem>
 
                 </GridItem>
 
-                <BorderedGridItem className='chart' $spanCols = {3}  $cols = {1}>
-                    <GridItem $spanCols = {1} style={{marginTop: '15px'}}>
-                        <h2>Category Distribution</h2>
-                    </GridItem>
-                    <CategoryPie data={pieData}/>
-                </BorderedGridItem>
+                <GridItem className = 'announcement-grid' $spanCols = {3} $cols = {3}> 
+                    <BorderedGridItem>
+                        <div className = 'limit-box'>
+                            <div>
+                                <p>spent from your set monthly limit</p>
+                            </div>
+                            <div>
+                                <h2>{limitStatus}</h2>
+                            </div>
+                        </div>
+                    </BorderedGridItem>
+                    <BorderedGridItem>
+                        <div className = 'average-box'>
+                            <div>
+                                <p>Based on your recent transactions, your average daily expense is</p>
+                            </div>
+                            <div>
+                                <h1>P{averageExpense.toFixed(2)}</h1>
+                            </div>
+                        </div>
+                    </BorderedGridItem>
+                    <BorderedGridItem>
+                    
+                    </BorderedGridItem>
+
+                    <BorderedGridItem>
+                    </BorderedGridItem>
+
+                </GridItem>
 
                 <BorderedGridItem className='report-history' $spanCols = {2}  $cols = {1}>
                     <GridItem $spanCols = {1} style={{margin: '10px'}}>
@@ -182,7 +282,7 @@ function App(){
 
                 <GridItem className='transaction-grid' $spanCols = {10} $cols = {10}>
                     <BorderedGridItem $spanCols = {7} $cols = {1}>
-                        <GridItem $spanCols = {1} $cols={2} style={{margin: '10px'}}>
+                        <GridItem $spanCols = {1} $cols={2} style={{margin: '0 10px'}}>
                             <GridItem $spanCols = {1} style={{margin: '10px'}}>
                                 <h2>Recent Transactions</h2>
                             </GridItem>
@@ -192,15 +292,16 @@ function App(){
                             </GridItem>
                         </GridItem>
                         {
-                            transactions.map((transaction, index) => (
+                            transactions.slice(0, 10).map((transaction, index) => (
                                 <Entry 
-                                    key = {index}
-                                    $name = {transaction.item}
-                                    $date = {transaction.transactionDate.toLocaleTimeString('en-US', format)}
-                                    $amount = {transaction.amount}
-                                    $flow = {transaction.flow}/>
+                                    key={index}
+                                    $name={transaction.item}
+                                    $date={transaction.transactionDate.toLocaleTimeString('en-US', format)}
+                                    $amount={transaction.amount}
+                                    $flow={transaction.flow}/>
                             ))
                         }
+
                     </BorderedGridItem>
 
                     <BorderedGridItem className='add-transaction' $spanCols={3} $cols={1}>

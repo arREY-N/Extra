@@ -58,7 +58,7 @@ nav{
     border-radius: 50%;
 }
 
-.chart, .monthly-limit{
+.chart{
     justify-items: center;
 }
 
@@ -114,3 +114,4 @@ nav{
     font-weight: bold;
     cursor: pointer;
 }
+s

@@ -6,38 +6,53 @@ import {
     Sector, 
     Cell, 
     ResponsiveContainer, 
-    Customized 
+    Customized,
+    CartesianGrid,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Line,
+    LineChart,
+    BarChart,
+    Bar,
+    Label
 } from 'recharts';
-
 
 const COLORS = ['red', 'green', 'blue', '#FF8042'];
 
-export default function CategoryPie({data}) {
+export function CategoryPie({data}) {
     return (
         <ResponsiveContainer width='100%' height='100%'>
             <PieChart>
-                <Legend
-                    verticalAlign='bottom'
-                    align='center'
-                    wrapperStyle={{marginTop: 0}} 
+                <Legend 
+                    verticalAlign="bottom" 
+                    align="center" 
+                    wrapperStyle={{ 
+                        marginTop: 10, 
+                        fontSize: '0.9rem', 
+                        padding: '5px' 
+                    }}     
                 />
+
                 <Pie
                     activeShape={renderActiveShape}
                     data={data}
-                    innerRadius={80}
+                    innerRadius={70}
                     outerRadius={100}
                     paddingAngle={5}
                     dataKey="value"
                     legendType='circle'
-                >
+                    cornerRadius={5} 
+                >   
                     {data.map((_, index) => (
                         <Cell 
                             key={`cell-${index}`} 
                             fill={COLORS[index % COLORS.length]}
                             stroke={COLORS[index % COLORS.length]}
-                            className='pie-slice-cell'/>
+                            className='pie-slice-cell'
+                        />
                         ))
-                    }        
+                    }       
                 </Pie>
             </PieChart>
         </ResponsiveContainer>
@@ -75,6 +90,7 @@ const renderActiveShape = (props) => {
             startAngle={startAngle}
             endAngle={endAngle}
             fill={fill}
+            cornerRadius={5}
         />
         
         <text 
@@ -90,31 +106,78 @@ const renderActiveShape = (props) => {
     );
 };
 
-import { ResponsivePie } from '@nivo/pie'
 
-const MyPie = ({ data /* see data tab */ }) => (
-    <ResponsivePie /* or Pie for fixed dimensions */
-        data={data}
-        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-        innerRadius={0.5}
-        padAngle={0.6}
-        cornerRadius={2}
-        activeOuterRadiusOffset={8}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsTextColor="#333333"
-        arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{ from: 'color' }}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-        legends={[
-            {
-                anchor: 'bottom',
-                direction: 'row',
-                translateY: 56,
-                itemWidth: 100,
-                itemHeight: 18,
-                symbolShape: 'circle'
-            }
-        ]}
-    />
-)
+export function DailyChart({data}){    
+    // Check if data exists and has items
+    if (!data || data.length === 0) {
+        return (
+            <div style={{
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                height: '100%',
+                color: 'var(--secondary-color)'
+            }}>
+                No data available for the chart
+            </div>
+        );
+    }
+    
+    return(
+        <div style={{ width: 'auto', height: '300px' }}>
+            <ResponsiveContainer height="100%" width="100%">
+                <BarChart 
+                    data={data} 
+                    margin={{ left: 20, bottom: 15 }}
+                    barCategoryGap="30%"
+                    backgroundColor="var(--container-color)"
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                        dataKey="Date" 
+                        stroke="var(--secondary-color)"
+                        tick={{fill: "var(--secondary-color)"}} 
+                        height={60} 
+                        tickMargin={10}
+                    >
+                        <Label 
+                            value="Date" 
+                            position="insideBottom"  
+                        />
+                    </XAxis>
+                    <YAxis 
+                        stroke="var(--secondary-color)"
+                        tick={{fill: "var(--secondary-color)"}} 
+                        width={80} 
+                        tickMargin={10}
+                    >
+                        <Label 
+                            value="Amount (PHP)" 
+                            position="insideLeft" 
+                            angle={-90} 
+                        />
+                    </YAxis>
+                    <Tooltip   
+                        cursor ={{
+                            fill: 'var(--background-shade)',
+                            stroke: 'var(--secondary-color)',
+                            strokeWidth: 1,
+                        }}
+                        contentStyle={{
+                            backgroundColor: 'var(--container-color)',
+                            border: '1px solid var(--secondary-color)',
+                            color: 'var(--secondary-color)'
+                        }}
+                    />
+                    <Bar 
+                        dataKey="Amount" 
+                        fill="var(--secondary-color)"
+                        stroke='var(--secondary-color)' 
+                        radius={[20, 20, 0, 0]} 
+                        unit={'PHP'}
+                    />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
