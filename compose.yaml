@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=extradb'
+      - 'POSTGRES_PASSWORD=devarreyn2025'
+      - 'POSTGRES_USER=arreyn'
+    ports:
+      - '5432:5432'

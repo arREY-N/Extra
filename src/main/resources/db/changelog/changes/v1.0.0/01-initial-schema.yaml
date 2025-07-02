@@ -1,0 +1,142 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 01-create-users-table
+      author: reyn
+      changes:
+        - createTable:
+            tableName: app_user # Changed to 'app_user' to avoid potential conflicts with SQL 'user' keyword
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(255) # Use a larger size for hashed passwords if you plan to hash them (recommended!)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 02-create-categories-table
+      author: reyn
+      changes:
+        - createTable:
+            tableName: category
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50) # Matching your @Size(max=50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 03-create-flows-table
+      author: reyn
+      changes:
+        - createTable:
+            tableName: flow
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50) # Matching your @Size(max=50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 04-create-transactions-table
+      author: reyn
+      changes:
+        - createTable:
+            tableName: transaction
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: item
+                  type: VARCHAR(50) # Matching your @Size(max=50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(12,2) # Matches your @Column(precision=12, scale=2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id # Foreign key column for Category
+                  type: BIGINT
+                  constraints:
+                    # 'nullable: true' here because your Transaction entity's @JoinColumn(name="category_id")
+                    # defaults to nullable=true. This allows for onDelete: SET NULL.
+                    nullable: true
+              - column:
+                  name: flow_id # Foreign key column for Flow
+                  type: BIGINT
+                  constraints:
+                    # 'nullable: false' as per your Transaction entity's @JoinColumn(nullable=false)
+                    nullable: false
+              - column:
+                  name: user_id # Foreign key column for User
+                  type: BIGINT
+                  constraints:
+                    # 'nullable: false' as per your Transaction entity's @JoinColumn(nullable=false)
+                    nullable: false
+
+  - changeSet:
+      id: 05-add-transaction-foreign-keys
+      author: reyn
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: category_id
+            baseTableName: transaction
+            constraintName: fk_transaction_category
+            referencedColumnNames: id
+            referencedTableName: category
+            onDelete: SET NULL # When a Category is deleted, the category_id in Transaction becomes NULL.
+        - addForeignKeyConstraint:
+            baseColumnNames: flow_id
+            baseTableName: transaction
+            constraintName: fk_transaction_flow
+            referencedColumnNames: id
+            referencedTableName: flow
+            # Cannot be SET NULL because flow_id is defined as NOT NULL in transaction table.
+            # NO ACTION or RESTRICT prevent deleting a Flow if there are linked Transactions.
+            onDelete: NO ACTION # Or RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: transaction
+            constraintName: fk_transaction_user
+            referencedColumnNames: id
+            referencedTableName: app_user # Referencing the renamed user table
+            # Cannot be SET NULL because user_id is defined as NOT NULL in transaction table.
+            onDelete: NO ACTION # Or RESTRICT
