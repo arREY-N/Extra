@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const GridContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(${props => props.$cols || 12 }, 1fr);
-    grid-auto-rows: minmax(50px, auto);
+    grid-template-rows: repeat(${props => props.$rows || 1 }, 1fr);
     gap: 15px;
     margin: 10px auto;
 
@@ -15,10 +15,11 @@ export const GridContainer = styled.div`
 
 export const GridItem = styled.div`
     grid-column: span ${props => props.$spanCols || 12 } / auto; 
-    grid-row: span ${props => props.$rows || 1 } / auto;
+    grid-row: span ${props => props.$spanRows || 1 } / auto;
 
     display: grid;
     grid-template-columns: repeat(${props => props.$cols || 1 }, 1fr);
+    grid-template-rows: repeat(${props => props.$rows || 1 }, 1fr);
     gap: 15px;
 
     @media screen and (max-width: 1200px) {
@@ -39,3 +40,4 @@ export const BorderedGridItem = styled(GridItem)`
         transition: transform 0.1s ease-in-out;
     }
 `
+
