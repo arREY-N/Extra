@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-add-transaction-date
+      author: reyn
+      comment: Add transaction_date column to transactions table with a default value.
+      changes:
+        - addColumn:
+            tableName: transaction
+            columns:
+              - column:
+                  name: transaction_date
+                  type: TIMESTAMP # Use database-appropriate type (e.g., TIMESTAMP, DATETIME)
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: NOW() # Use NOW() or CURRENT_TIMESTAMP for current time
+      rollback:
+        - dropColumn:
+            tableName: transaction
+            columnName: transaction_date
