@@ -22,40 +22,42 @@ const COLORS = ['red', 'green', 'blue', '#FF8042'];
 
 export function CategoryPie({data}) {
     return (
-        <ResponsiveContainer width='100%' height='100%'>
-            <PieChart>
-                <Legend 
-                    verticalAlign="bottom" 
-                    align="center" 
-                    wrapperStyle={{ 
-                        marginTop: 10, 
-                        fontSize: '0.9rem', 
-                        padding: '5px' 
-                    }}     
-                />
+        <div style={{ width: 'auto', height: '300px' }}>
+            <ResponsiveContainer width='100%' height='100%'>
+                <PieChart>
+                    <Legend 
+                        verticalAlign="bottom" 
+                        align="center" 
+                        wrapperStyle={{ 
+                            marginTop: 10, 
+                            fontSize: '0.9rem', 
+                            padding: '5px' 
+                        }}     
+                    />
 
-                <Pie
-                    activeShape={renderActiveShape}
-                    data={data}
-                    innerRadius={70}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                    legendType='circle'
-                    cornerRadius={5} 
-                >   
-                    {data.map((_, index) => (
-                        <Cell 
-                            key={`cell-${index}`} 
-                            fill={COLORS[index % COLORS.length]}
-                            stroke={COLORS[index % COLORS.length]}
-                            className='pie-slice-cell'
-                        />
-                        ))
-                    }       
-                </Pie>
-            </PieChart>
-        </ResponsiveContainer>
+                    <Pie
+                        activeShape={renderActiveShape}
+                        data={data}
+                        innerRadius={70}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey="value"
+                        legendType='circle'
+                        cornerRadius={5} 
+                    >   
+                        {data.map((_, index) => (
+                            <Cell 
+                                key={`cell-${index}`} 
+                                fill={COLORS[index % COLORS.length]}
+                                stroke={COLORS[index % COLORS.length]}
+                                className='pie-slice-cell'
+                            />
+                            ))
+                        }       
+                    </Pie>
+                </PieChart>
+            </ResponsiveContainer>
+        </div>
     );
 }
 
