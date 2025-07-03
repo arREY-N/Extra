@@ -1,8 +1,6 @@
 import '../styles/NavBar.css';
 import { GridItem } from './Containers';
 import { useEffect, useState } from 'react';
-import DayIcon from '@mui/icons-material/WbSunnyOutlined';
-import NightIcon from '@mui/icons-material/NightlightRounded';
 
 export default function NavBar() {
 
