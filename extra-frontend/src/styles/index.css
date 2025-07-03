@@ -8,6 +8,8 @@
     --radius: 10px;
     --wireframe: 1px solid hsla(0, 0%, 90%, .9);
     --padding: 10px;
+
+    --null-color: hsla(0, 0, 90%, .9);
     
     --primary-color-light: #EFEFEF;
     --secondary-color-light: #2E2E2E;
