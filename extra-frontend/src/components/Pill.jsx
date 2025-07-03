@@ -1,6 +1,18 @@
 import React from "react";
 import styled from "styled-components";
 
+export const AnnouncementPillStyle = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 100%;
+    transition: transform 0.3s ease;
+    color: var(--secondary-color);
+    height: auto;
+    justify-content: space-between;
+`
+
+
 export const PillStyle = styled.div`
     display: flex;
     flex-direction: column;
@@ -78,6 +90,20 @@ export const ReportPillStyle = styled.button`
     }
 `
 
+export const NullPillStyle = styled.div`
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    color: rgba(0,0,0,0.5);
+  
+    h2{
+        width: 100%;
+        text-align: center;
+    }
+
+`
+
+
 export function Pill(props){
     
     const IconComponent = typeof props.$img !== 'string' ? props.$img : null;
@@ -125,5 +151,29 @@ export function ReportPill(props){
                 </div>
             </ReportPillStyle>
         </>
+    );
+}
+
+export function AnnouncementPill(props){
+    return(
+        <AnnouncementPillStyle>
+            <div className = 'description'>
+                <p>{props.$description}</p>
+            </div>
+            <div className = 'value'>
+                <h1>{props.$value}</h1>
+                {
+                    props.$sub !== null ? <p>{props.$sub}</p> : ""
+                }
+            </div>
+        </AnnouncementPillStyle>
+    );   
+}
+
+export function NullPill(){
+    return(
+        <NullPillStyle>
+            <h2> No recorded transactions, yet! </h2>
+        </NullPillStyle>
     );
 }
