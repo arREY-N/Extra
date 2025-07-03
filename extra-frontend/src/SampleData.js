@@ -8,6 +8,8 @@ export const lineFormat = {
     month: 'short', day: 'numeric'
 }
 
+export const monthlyLimit = 0.75;
+
 export const sampleTransactions = [
     {
         id: 1,
@@ -220,7 +222,7 @@ export const sampleTransactions = [
     {
         id: 27,
         item: 'Investment Return',
-        transactionDate: new Date(2025, 5, 29, 10, 0), // June 29, 2025 (Today)
+        transactionDate: new Date(2025, 5, 29, 10, 0), 
         amount: 5000,
         flow: 2,
         category: null
@@ -296,5 +298,46 @@ export const sampleTransactions = [
         amount: 400,
         flow: 2,
         category: null
+    },
+    {
+        id: 37,
+        item: 'April',
+        transactionDate: new Date(2025, 4, 12, 12, 0),
+        amount: 400,
+        flow: 1,
+        category: 'Shopping'
+    }
+];
+
+export const sampleReports = [
+    {
+        id: 1,
+        month: 'March',
+        year: 2025,
+        isComplete: true
+    },
+    {
+        id: 2,
+        month: 'April',
+        year: 2025,
+        isComplete: true
+    },
+    {
+        id: 3,
+        month: 'May',
+        year: 2025,
+        isComplete: true
+    },
+    {
+        id: 4,
+        month: 'June',
+        year: 2025,
+        isComplete: true
+    },
+    {
+        id: 5,
+        month: 'July',
+        year: 2025,
+        isComplete: false
     }
 ];
