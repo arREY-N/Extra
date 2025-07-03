@@ -98,6 +98,11 @@ nav{
     height: auto;
 }
 
+.transaction-grid{
+    align-self: flex-start;
+    height: auto;
+}
+
 .add-transaction {
     top: 10px;  
     position: sticky;
@@ -114,4 +119,3 @@ nav{
     font-weight: bold;
     cursor: pointer;
 }
-s
