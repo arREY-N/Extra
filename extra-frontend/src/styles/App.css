@@ -19,12 +19,6 @@ nav{
     padding: 10px 20px;
 }
 
-@media screen and (max-width: 1200px) {
-    .nav-links > div{
-        display: none;;
-    }    
-}
-
 .summary-pill{
     display: flex;
     flex-direction: column;
