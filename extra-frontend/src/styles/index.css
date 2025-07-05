@@ -9,8 +9,9 @@
     --wireframe: 1px solid hsla(0, 0%, 90%, .9);
     --padding: 10px;
 
-    --null-color: hsla(0, 0, 90%, .9);
-    
+    --null-color-light: rgba(0,0,0,0.5);
+    --null-color-dark: rgba(255,255,255,0.5);
+
     --primary-color-light: #EFEFEF;
     --secondary-color-light: #2E2E2E;
     --container-color-light: #F2F2F2;
@@ -29,9 +30,6 @@
     max-width: 80vw;
     margin: 0 auto;
     
-    @media screen and (max-width: 700px) {
-        max-width: 90vw;
-    }
 }
 
 *{
@@ -41,11 +39,14 @@
 }
 
 body{
+    padding-top: 90px;
+    scrollbar-gutter: stable both-edges;
     --primary-color: var(--primary-color-light);
     --secondary-color: var(--secondary-color-light);
     --container-color: var(--container-color-light);
     --box-shadow: var(--box-shadow-light);
     --background-shade: var(--background-shade-light);
+    --null-color: var(--null-color-light);
 
     background-color: var(--primary-color);
     color: var(--secondary-color);
@@ -58,6 +59,7 @@ body.dark{
     --container-color: var(--container-color-dark);
     --box-shadow: var(--box-shadow-dark);
     --background-shade: var(--background-shade-dark);
+    --null-color: var(--null-color-dark);
 
     background-color: var(--primary-color);
     color: var(--secondary-color);
