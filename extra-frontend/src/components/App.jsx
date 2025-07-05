@@ -6,18 +6,189 @@ import { CategoryPie, DailyChart } from './Charts';
 import { useState, useEffect, useMemo } from 'react';
 import { sampleReports, sampleTransactions, format, monthlyLimit } from '../SampleData';
 import Greeting from './Greeting';
-import NavBar from './NavBar';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import TrendingUpIcon from '@mui/icons-material/Payment';
 import TrendingDownIcon from '@mui/icons-material/Money';
 import * as Compute from './computation';
+import { HashRouter as Router, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import '../styles/NavBar.css';
 
 function App(){
-    
+    const [theme, setTheme] = useState(() => {
+        const stored = localStorage.getItem('theme');
+        if (stored) return stored;  
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+        return 'light';
+    });
+
+    useEffect(() => {
+        document.body.classList.toggle('dark', theme === 'dark');
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    function toggleTheme(){
+        document.body.classList.toggle('dark');
+        setTheme(prevTheme => prevTheme === "light" ? "dark" : "light");
+    }
+
+    return(
+        <Router>
+            <nav className="navbar">
+                <GridItem className='navbar-container' $cols = {12}>
+                    <GridItem $spanCols={7}>
+                        <h1>EXTRA</h1>    
+                    </GridItem>
+                    <GridItem className = 'nav-links' $spanCols = {5} $cols = {5}>
+                        <NavLink to = "/">Home</NavLink>
+                        <NavLink to = "/history">History</NavLink>
+                        <NavLink to = "/report">Report</NavLink>
+                        <NavLink to = "/settings">Settings</NavLink>
+                        <button onClick={toggleTheme}>
+                            {theme === 'dark' ? "Light Mode" : "Dark Mode"}
+                        </button>
+                    </GridItem>
+                </GridItem>
+            </nav>
+
+            <Routes>
+                <Route path='/' element = {<Home/>} index/>
+                <Route path='/history' element = {<History/>} index/>
+                <Route path='/report' element = {<Report/>} index/>
+                <Route path='/settings' element = {<Setting/>} index/>
+                <Route path='/add-transaction' element = {<Transaction/>} index/>
+            </Routes>
+        </Router>
+    );
+}
+
+function History(){
+    return(
+        <h1>History Page</h1>
+    );
+}
+
+function Report(){
+    return(
+        <h1>Report Page</h1>
+    );
+}
+function Setting(){
+    return(
+        <h1>Settings Page</h1>
+    );
+}
+
+function Transaction(){
+    const [flow, setFlow] = useState('income');
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState('');
+    const [amount, setAmount] = useState(undefined);
+    const [date, setDate] = useState(new Date().toISOString().slice(0,10));
+
+    const categories = ["Wants", "Needs", "Savings"];
+    return(
+        <>
+            <form>
+                <label htmlFor="transactionFlow">
+                    Transaction Type
+                </label>
+                <div>
+                    <input 
+                        type = 'radio'
+                        name = 'flow' 
+                        onChange={() => setFlow('Income')}
+                        checked = {flow === 'Income'}
+                        value = 'Income'/>
+                    <span>Income</span>
+                    <input 
+                        type = 'radio'
+                        name = 'flow' 
+                        onChange={() => setFlow('Expense')}
+                        checked = {flow === 'Expense'}
+                        value = 'Expense'/>
+                    <span>Expense</span>
+                </div>
+
+                <label htmlFor="transactionItem">
+                    Transaction Item
+                </label>
+                <input 
+                    type = 'text'
+                    id = 'name'
+                    name = 'name'
+                    value = {name}
+                    onChange={(e) => setName(e.target.value)}/>
+
+                <label htmlFor = "transactionPrice">
+                    Price
+                </label>
+                <input
+                    type = 'number'
+                    id = 'amount'
+                    name = 'amount'
+                    value = {amount}
+                    onChange = {(e) => setAmount(e.target.value)}/>
+
+
+                {
+                    flow === 'Expense' && (
+                        <>
+                            <label htmlFor="transactionCategory">
+                                Category
+                            </label>
+
+                            <select 
+                                name = "category" 
+                                id = "transactionCategory"
+                                value = {category}
+                                onChange = {(e) => setCategory(e.target.value)}>            
+
+                                <option value = '' disabled> Set Category </option>
+                                {
+                                    categories.map((cat) => (
+                                        <option key = {cat} value = {cat}> 
+                                            {cat} 
+                                        </option> 
+                                    ))
+                                }
+                            </select>
+                        </>
+                    )
+                } 
+
+                <label htmlFor = 'transactionDate'>
+                    Date
+                </label>
+                <input
+                    type = 'date'
+                    id = 'name'
+                    name = 'date'
+                    value = {date}
+                    onChange = {(e) => setDate(e.target.value)}/>
+
+                <button type = 'submit'>
+                    Add Transaction 
+                </button>
+            </form>
+
+            {flow}
+            {name}
+            {amount}
+            {category}
+
+        </>
+    );
+}
+
+function Home(){
+    const navigate = useNavigate();
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    
+ 
+    const goToAddTransaction = () => {
+        navigate('/add-transaction');
+    }
     const monthData = sampleTransactions.filter(entry => {
         const entryDate = new Date(entry.transactionDate);
         return entryDate >= start && entryDate <= end;
@@ -158,8 +329,6 @@ function App(){
 
     return(
         <>
-            <NavBar/>
-
             <GridContainer className='main-grid'>
                 <Greeting/>
             
@@ -304,7 +473,7 @@ function App(){
                     </BorderedGridItem>
 
                     <BorderedGridItem className='add-transaction' $spanCols={3} $cols={1}>
-                        <button className="add-transaction-btn">
+                        <button className="add-transaction-btn" onClick={goToAddTransaction}>
                             <p style={{fontWeight: 'bold'}}>ADD NEW TRANSACTION</p>
                         </button>
                     </BorderedGridItem>
