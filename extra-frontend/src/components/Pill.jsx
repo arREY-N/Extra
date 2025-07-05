@@ -94,9 +94,10 @@ export const NullPillStyle = styled.div`
     display: flex;
     align-items: center;
     justify-items: center;
-    color: rgba(0,0,0,0.5);
+    color: var(--null-color);
   
     h2{
+        font-size: 1rem;
         width: 100%;
         text-align: center;
     }
