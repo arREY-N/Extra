@@ -7,7 +7,7 @@ export const GridContainer = styled.div`
     gap: 15px;
     margin: 10px auto;
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 900px) {
         grid-template-columns: 1fr;
         margin: 0 auto;
     }
@@ -22,7 +22,7 @@ export const GridItem = styled.div`
     grid-template-rows: repeat(${props => props.$rows || 1 }, 1fr);
     gap: 15px;
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 900px) {
         grid-template-columns: 1fr;
         grid-column: span 1;
     }
