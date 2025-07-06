@@ -1,7 +1,7 @@
 import '../styles/App.css';
 import { GridContainer, GridItem, BorderedGridItem } from './Containers';
 import { Pill, ReportPill, AnnouncementPill, NullPill } from './Pill'
-import { Entry } from './Transaction';
+import { Entry, TransactionForm } from './Transaction';
 import { CategoryPie, DailyChart } from './Charts';
 import { useState, useEffect, useMemo } from 'react';
 import { sampleReports, sampleTransactions, format, monthlyLimit } from '../SampleData';
@@ -55,7 +55,7 @@ function App(){
                 <Route path='/history' element = {<History/>} index/>
                 <Route path='/report' element = {<Report/>} index/>
                 <Route path='/settings' element = {<Setting/>} index/>
-                <Route path='/add-transaction' element = {<Transaction/>} index/>
+                <Route path='/add-transaction' element = {<TransactionForm/>} index/>
             </Routes>
         </Router>
     );
@@ -78,107 +78,6 @@ function Setting(){
     );
 }
 
-function Transaction(){
-    const [flow, setFlow] = useState('income');
-    const [name, setName] = useState('');
-    const [category, setCategory] = useState('');
-    const [amount, setAmount] = useState(undefined);
-    const [date, setDate] = useState(new Date().toISOString().slice(0,10));
-
-    const categories = ["Wants", "Needs", "Savings"];
-    return(
-        <>
-            <form>
-                <label htmlFor="transactionFlow">
-                    Transaction Type
-                </label>
-                <div>
-                    <input 
-                        type = 'radio'
-                        name = 'flow' 
-                        onChange={() => setFlow('Income')}
-                        checked = {flow === 'Income'}
-                        value = 'Income'/>
-                    <span>Income</span>
-                    <input 
-                        type = 'radio'
-                        name = 'flow' 
-                        onChange={() => setFlow('Expense')}
-                        checked = {flow === 'Expense'}
-                        value = 'Expense'/>
-                    <span>Expense</span>
-                </div>
-
-                <label htmlFor="transactionItem">
-                    Transaction Item
-                </label>
-                <input 
-                    type = 'text'
-                    id = 'name'
-                    name = 'name'
-                    value = {name}
-                    onChange={(e) => setName(e.target.value)}/>
-
-                <label htmlFor = "transactionPrice">
-                    Price
-                </label>
-                <input
-                    type = 'number'
-                    id = 'amount'
-                    name = 'amount'
-                    value = {amount}
-                    onChange = {(e) => setAmount(e.target.value)}/>
-
-
-                {
-                    flow === 'Expense' && (
-                        <>
-                            <label htmlFor="transactionCategory">
-                                Category
-                            </label>
-
-                            <select 
-                                name = "category" 
-                                id = "transactionCategory"
-                                value = {category}
-                                onChange = {(e) => setCategory(e.target.value)}>            
-
-                                <option value = '' disabled> Set Category </option>
-                                {
-                                    categories.map((cat) => (
-                                        <option key = {cat} value = {cat}> 
-                                            {cat} 
-                                        </option> 
-                                    ))
-                                }
-                            </select>
-                        </>
-                    )
-                } 
-
-                <label htmlFor = 'transactionDate'>
-                    Date
-                </label>
-                <input
-                    type = 'date'
-                    id = 'name'
-                    name = 'date'
-                    value = {date}
-                    onChange = {(e) => setDate(e.target.value)}/>
-
-                <button type = 'submit'>
-                    Add Transaction 
-                </button>
-            </form>
-
-            {flow}
-            {name}
-            {amount}
-            {category}
-
-        </>
-    );
-}
 
 function Home(){
     const navigate = useNavigate();
