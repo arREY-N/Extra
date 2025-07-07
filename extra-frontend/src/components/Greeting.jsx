@@ -5,7 +5,7 @@ import { format } from '../SampleData';
 import DayIcon from '@mui/icons-material/WbSunnyOutlined';
 import NightIcon from '@mui/icons-material/NightlightRounded';
 
-export default function Greeting() {
+export function Greeting() {
     const [date, setDate] = useState(new Date().toLocaleString('en-US', format));
     const [greeting, setGreeting] = useState("Good day");
     const [isNight, setIsNight] = useState(false);
@@ -54,3 +54,5 @@ export default function Greeting() {
         </GridItem>
     );
 }
+
+export default Greeting;
