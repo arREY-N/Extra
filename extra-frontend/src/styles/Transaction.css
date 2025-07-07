@@ -1,6 +1,10 @@
 .transaction-form{
     width: 40%;
-    margin: 30px auto;
+    margin: 40px auto;
+
+    @media screen and (max-width: 900px) {
+        width: 90%;
+    }
 }
 
 fieldset{
@@ -11,14 +15,22 @@ fieldset{
 }
 
 .transaction-button{
-    border: none;
-    background-color: var(--highlight-b);
+    border: 1px solid var(--highlight-b);
+    background-color: var(--container-color);
     padding: 20px;
-    width: 60%;
+    width: 50%;
     margin: auto;
+    margin-top: 20px;
+    border-radius: 10px;
+    color: var(--secondary-color);
+    font-weight: bold;
+    cursor: pointer;
 }
 
-
+.transaction-button:hover{
+    background-color: var(--highlight-b);
+    color: var(--secondary-color-dark)
+}
 
 .input-container{
     background-color: white;
@@ -60,12 +72,12 @@ fieldset{
     padding: 10px;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .radio-group > a:hover{
     background-color: var(--highlight-b);
-    color: var(--primary-color);
+    color: var(--secondary-color-dark);
 }
 
 .active-radio{
