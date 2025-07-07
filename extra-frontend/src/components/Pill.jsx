@@ -22,7 +22,6 @@ export const PillStyle = styled.div`
     padding: 10px;
     width: 100%;
     transition: transform 0.3s ease;
-    cursor: pointer;
     color: var(--secondary-color);
 
     .pillIcon {
