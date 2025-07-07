@@ -1,17 +1,20 @@
+// Style sheets
 import '../styles/App.css';
-import { GridContainer, GridItem, BorderedGridItem } from './Containers';
-import { Pill, ReportPill, AnnouncementPill, NullPill } from './Pill'
-import { Entry, TransactionForm } from './Transaction';
-import { CategoryPie, DailyChart } from './Charts';
-import { useState, useEffect, useMemo } from 'react';
-import { sampleReports, sampleTransactions, format, monthlyLimit } from '../SampleData';
-import Greeting from './Greeting';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import TrendingUpIcon from '@mui/icons-material/Payment';
-import TrendingDownIcon from '@mui/icons-material/Money';
-import * as Compute from './computation';
-import { HashRouter as Router, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import '../styles/NavBar.css';
+
+// libraries
+import { useState, useEffect, useMemo } from 'react';
+import { HashRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+
+// components
+import { GridContainer, GridItem } from './Containers';
+import { TransactionForm } from './Transaction';
+import { sampleReports, sampleTransactions, format, monthlyLimit } from '../SampleData';
+import { Greeting } from './Greeting';
+import { ReportHistory, SummaryGrid, AnnouncementGrid, TransactionGrid } from './HomeComponents';
+
+// functions
+import * as Compute from './computation';
 
 function App(){
     const [theme, setTheme] = useState(() => {
@@ -79,26 +82,26 @@ function Setting(){
 }
 
 
-function Home(){
-    const navigate = useNavigate();
+function Home(){ 
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
- 
-    const goToAddTransaction = () => {
-        navigate('/add-transaction');
-    }
+
+
     const monthData = sampleTransactions.filter(entry => {
         const entryDate = new Date(entry.transactionDate);
         return entryDate >= start && entryDate <= end;
-    }, []);
+    });
 
     const [transactions, setTransactions] = useState(monthData);
+
+    const reversedTransactions = useMemo(() => {
+        return [...transactions].reverse();
+    }, [transactions]);
 
     const [reports, setReports] = useState(sampleReports);
     const limit = monthlyLimit;
     
-
     useEffect(()=>{
         const fetchReports = async () => {
             try{
@@ -128,7 +131,7 @@ function Home(){
                     return entryDate >= start && entryDate <= end;
                 });
     
-                setTransactions(mmonthTransaction);
+                setTransactions(monthTransaction);
             } catch(e){
                 console.log("Error fetching transactions:", e);
             }
@@ -147,35 +150,7 @@ function Home(){
         () => Compute.getIncomeTransactions(transactions), 
         [transactions]
     ); 
-
-    const categoryData = useMemo(
-        () => Compute.getAmountByCategory(expensesTransactions), 
-        [transactions]
-    );
-
-    const dailyExpenses = useMemo(
-        () => Compute.getDailyExpenses(expensesTransactions), 
-        [transactions]
-    );
     
-    const lineData = useMemo(
-        () => {
-            return dailyExpenses !== null ? 
-                Object.entries(dailyExpenses).map(([Date, Amount]) => ({ Date, Amount })) :
-                null
-        },
-        [dailyExpenses] 
-    );
-
-    const pieData = useMemo(
-        () => {
-            return categoryData !== null ? 
-                Object.entries(categoryData).map(([name, value]) => ({ name, value })) :
-                null 
-        },
-        [categoryData]
-    );
-
     const expenses = useMemo(
         () => expensesTransactions.reduce((sum, entry) => sum + (Number(entry.amount) || 0), 0),
         [transactions]
@@ -184,36 +159,6 @@ function Home(){
     const income = useMemo(
         () => incomeTransactions.reduce((sum, entry) => sum + (Number(entry.amount) || 0), 0),
         [transactions]
-    );
-
-    const balance = useMemo(
-        () => income - expenses,
-        [income, expenses]
-    );
-
-    const limitStatus = useMemo(
-        () => Compute.getLimitStatus(limit, income, expenses),
-        [expenses, income, limit]
-    );
-    
-    const averageExpense = useMemo(
-        () => Compute.getAverageExpense(expensesTransactions),
-        [expensesTransactions]
-    );
-
-    const highestExpense = useMemo(
-        () => Compute.getHighestExpense(expensesTransactions),
-        [expensesTransactions]
-    );
-
-    const projectedMonthly = useMemo( 
-        () => Compute.getProjectedMonthly(expensesTransactions),
-        [expensesTransactions]
-    );
-
-    const highestCategory = useMemo(
-        () => Compute.getHighestCategory(expensesTransactions),
-        [expensesTransactions]
     );
 
     const monthOrder = {
@@ -230,155 +175,25 @@ function Home(){
         <>
             <GridContainer className='main-grid'>
                 <Greeting/>
-            
-                <GridItem className='summary-grid' $spanCols = {9} $cols = {9}>
-                    <BorderedGridItem className='balance-pill' $spanCols =  {3}>
-                        <Pill 
-                            $img={AccountBalanceWalletIcon} 
-                            $title = {'Current Balance'}
-                            $value = {`P ${balance.toFixed(2)}`}
-                            $color = {'var(--highlight-b)'} />   
-                    </BorderedGridItem>
 
-                    <BorderedGridItem className='expense-pill' $spanCols =  {3}>
-                        <Pill 
-                            $img={TrendingUpIcon} 
-                            $title = {'Total Expense'}
-                            $value = {`P ${expenses.toFixed(2)}`}
-                            $color = {'var(--highlight-a)'} />
-                    </BorderedGridItem>
+                <SummaryGrid 
+                    expensesTransactions = {expensesTransactions}
+                    expenses = {expenses}
+                    income = {income}/>
 
-                    <BorderedGridItem className='income-pill' $spanCols =  {3}>
-                        <Pill 
-                            $img={TrendingDownIcon} 
-                            $title = {'Total Income'}
-                            $value = {`P ${income.toFixed(2)}`}
-                            $color = {'var(--highlight-c)'} />
-                    </BorderedGridItem>
+                <AnnouncementGrid 
+                    expensesTransactions = {expensesTransactions}
+                    expenses = {expenses}
+                    income = {income}
+                    limit = {limit}/>
 
-                    <BorderedGridItem $spanCols = {6} $cols = {1}>
-                        {
-                            lineData !== null ?
-                                <>
-                                    <GridItem $spanCols = {1} style={{marginTop: '10px', marginLeft: '10px'}}>
-                                        <h2>7-Day Record</h2>
-                                    </GridItem>
-                                    <DailyChart data={lineData} />
-                                </> :
-                                <>
-                                    <NullPill/>
-                                </>
-                        }
-                    </BorderedGridItem>
+                <ReportHistory 
+                    sortedReports={sortedReports}/>
 
-                    <BorderedGridItem $spanCols = {3}  $cols = {1}>
-                            {
-                                pieData !== null ?
-                                    <>
-                                        <GridItem $spanCols = {1} style={{marginTop: '10px', marginLeft: '10px'}}>
-                                            <h2>Category Distribution</h2>
-                                        </GridItem>
-                                        <CategoryPie data={pieData}/>
-                                    </> :
-                                    <>
-                                        <NullPill/>
-                                    </>
-                            }
-                    </BorderedGridItem>
-
-                </GridItem>
-
-                <GridItem className = 'announcement-grid' $spanCols = {3} $cols = {3} $rows = {4}> 
-                    <BorderedGridItem>
-                        {
-                            limitStatus === null ? <NullPill/> :
-                            <AnnouncementPill 
-                                $description = "Monthly Limit Used"
-                                $value = {`${limitStatus.toFixed(2)}%`}
-                            />
-                        }
-                    </BorderedGridItem>
-                    <BorderedGridItem>
-                        {
-                            averageExpense === null ? <NullPill/> :
-                            <AnnouncementPill
-                                $description = "Average Daily Expanse"
-                                $value = {`P ${averageExpense.toFixed(2)}`}
-                            />
-                        }
-                    </BorderedGridItem>
-                    <BorderedGridItem>
-                        {
-                            highestExpense === null ? <NullPill/> :
-                            <AnnouncementPill
-                                $description = "Highest Single Purchase"
-                                $value = {`P ${highestExpense.amount.toFixed(2)}`}
-                                $sub = {highestExpense.item}/>
-
-                        }
-                    </BorderedGridItem>
-                    <BorderedGridItem>
-                        {
-                            highestCategory === null ? <NullPill/> :
-                            <AnnouncementPill
-                                $description = "Highest Category"
-                                $value = {`P ${highestCategory.amount.toFixed(2)}`}
-                                $sub = {highestCategory.category}
-                            />
-                        }
-                    </BorderedGridItem>
-
-                </GridItem>
-
-                <BorderedGridItem className='report-history' $spanCols = {2}  $cols = {1}>
-                    <GridItem $spanCols = {1} style={{margin: '10px'}}>
-                        <h2>Report History</h2>
-                    </GridItem>
-                    {
-                        sortedReports.slice(0, 3).map((report, index) => (
-                            <ReportPill 
-                                key={index}
-                                $isComplete={report.isComplete} 
-                                $date={`${report.month} ${report.year}`}/>
-                        ))
-                    }
-
-                    <GridItem $spanCols = {1} style={{margin: '10px', textAlign: 'center'}}>
-                        <p className = 'see-all'>See all</p>
-                    </GridItem>
-                </BorderedGridItem>
-
-                <GridItem className='transaction-grid' $spanCols = {10} $cols = {10}>
-                    <BorderedGridItem $spanCols = {7} $cols = {1}>
-                        <GridItem $spanCols = {1} $cols={2} style={{margin: '0 10px'}}>
-                            <GridItem $spanCols = {1} style={{margin: '10px'}}>
-                                <h2>Recent Transactions</h2>
-                            </GridItem>
-
-                            <GridItem $spanCols = {1} style={{margin: '10px', textAlign: 'en'}}>
-                                <p className='see-all'>See all</p>
-                            </GridItem>
-                        </GridItem>
-                        {
-                            transactions.slice(0, 10).map((transaction, index) => (
-                                <Entry 
-                                    key={index}
-                                    $name={transaction.item}
-                                    $date={transaction.transactionDate.toLocaleTimeString('en-US', format)}
-                                    $amount={transaction.amount}
-                                    $flow={transaction.flow}/>
-                            ))
-                        }
-                    </BorderedGridItem>
-
-                    <BorderedGridItem className='add-transaction' $spanCols={3} $cols={1}>
-                        <button className="add-transaction-btn" onClick={goToAddTransaction}>
-                            <p style={{fontWeight: 'bold'}}>ADD NEW TRANSACTION</p>
-                        </button>
-                    </BorderedGridItem>
-                </GridItem>
+                <TransactionGrid 
+                    reversedTransactions = {reversedTransactions}/>
+                
             </GridContainer>
-
         </>
     );
 }
