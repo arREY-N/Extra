@@ -34,10 +34,5 @@ export const BorderedGridItem = styled(GridItem)`
     border-radius: var(--radius);
     box-shadow:  ${props => props.$boxShadow || 'var(--box-shadow)'};
     background-color: var(${ props => props.$bgColor || '--container-color'});
-
-    &:hover {
-        transform: translateY(-5px);
-        transition: transform 0.1s ease-in-out;
-    }
 `
 
