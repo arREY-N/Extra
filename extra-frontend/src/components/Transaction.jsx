@@ -2,6 +2,7 @@ import { GridItem, BorderedGridItem } from './Containers';
 import '../styles/Transaction.css';
 import styled from "styled-components";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Row = styled.div`
     margin: 0 10px;
@@ -92,17 +93,55 @@ export function Entry(props){
 }
 
 export function TransactionForm(){
-    const [flow, setFlow] = useState('Income');
+    const navigate = useNavigate();
+    const [flow, setFlow] = useState('Expense');
     const [name, setName] = useState('');
-    const [category, setCategory] = useState('');
-    const [amount, setAmount] = useState(undefined);
+    const [category, setCategory] = useState(null);
+    const [amount, setAmount] = useState(0); // Initialize as Number(undefined) to avoid NaN issues
     const [date, setDate] = useState(new Date().toISOString().slice(0,10));
 
+    const [errors, setErrors] = useState({});
+
     const categories = ["Wants", "Needs", "Savings"];
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const newErrors = {};
+        if (name.trim().length < 1) newErrors.name = "Transaction item is required.";
+        if (!amount || isNaN(amount) || amount <= 0) newErrors.amount = "Amount must be a positive number.";
+        if (flow === 'Expense' && !category) newErrors.category = "Category is required for expenses."; 
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+        
+        const newTransaction = {
+            flow: flow,
+            name: name.trim(),
+            category: category,
+            amount: parseFloat(amount),
+            date: date, // Keep as YYYY-MM-DD string or convert to Date object if needed
+        };
+
+        console.log('Submitted Transaction:', newTransaction);
+
+        navigate('/');
+
+        setFlow('Income');
+        setName('');
+        setCategory(null);
+        setAmount(0);
+        setDate(new Date().toISOString().slice(0,10));
+    }
+
     return(
         <>
             <BorderedGridItem className='transaction-form' $spanCols = {12} $cols = {1}>
-                <GridItem $spanCols = {1} style={{marginTop: '10px', marginLeft: '10px'}}>
+                <GridItem $spanCols = {1} style={{margin: '20px', textAlign: 'center'}}>
                     <h2>Add New Transaction</h2>
                 </GridItem>
             
@@ -132,7 +171,7 @@ export function TransactionForm(){
                                         className='form-input'
                                         name = "category" 
                                         id = "transactionCategory"
-                                        value = {category}
+                                        value = {flow === 'Expense' ? '' : null}
                                         onChange = {(e) => setCategory(e.target.value)}>            
 
                                         <option value = '' disabled> Set Category </option>
@@ -144,6 +183,11 @@ export function TransactionForm(){
                                             ))
                                         }
                                     </select>
+
+                                    { 
+                                        errors.category && 
+                                        <span className='error-message'> {errors.category} </span>
+                                    }
                                 </>
                             )
                         }
@@ -160,6 +204,11 @@ export function TransactionForm(){
                             placeholder='Enter transaction item'
                             onChange={(e) => setName(e.target.value)}/>
 
+                        { 
+                            errors.name && 
+                            <span className='error-message'> {errors.name} </span>
+                        }
+
                         <label className='form-label' htmlFor = "transactionPrice">
                             Amount
                         </label>
@@ -168,9 +217,14 @@ export function TransactionForm(){
                             type = 'number'
                             id = 'amount'
                             name = 'amount'
-                            value = {amount}
+                            value = {amount == 0 ? '' : amount}
                             placeholder='Enter amount'
                             onChange = {(e) => setAmount(e.target.value)}/> 
+
+                        { 
+                            errors.amount && 
+                            <span className='error-message'> {errors.amount} </span>
+                        }
 
                         <label className='form-label' htmlFor = 'transactionDate'>
                             Date
@@ -183,18 +237,12 @@ export function TransactionForm(){
                             value = {date}
                             onChange = {(e) => setDate(e.target.value)}/>
 
-                        <button className='transaction-button' type = 'submit'>
+                        <button className='transaction-button' type = 'submit' onClick={handleSubmit}>
                             Add Transaction 
                         </button>
                     </fieldset>
                 </form>
             </BorderedGridItem>
-
-            {flow}
-            {name}
-            {amount}
-            {category}
-
         </>
     );
 }
