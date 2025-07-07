@@ -1,8 +1,9 @@
 import { GridItem, BorderedGridItem } from './Containers';
 import '../styles/Transaction.css';
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { sampleTransactions, format } from '../SampleData';
 
 export const Row = styled.div`
     margin: 0 10px;
@@ -96,9 +97,32 @@ export function TransactionForm(){
     const navigate = useNavigate();
     const [flow, setFlow] = useState('Expense');
     const [name, setName] = useState('');
-    const [category, setCategory] = useState(null);
-    const [amount, setAmount] = useState(0); // Initialize as Number(undefined) to avoid NaN issues
-    const [date, setDate] = useState(new Date().toISOString().slice(0,10));
+    const [category, setCategory] = useState('');
+    const [amount, setAmount] = useState(0);
+    const [date, setDate] = useState(() => {
+        const now = new Date();
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            timeZone: 'Asia/Manila'
+        };
+
+        const formatter = new Intl.DateTimeFormat('en-US', options); 
+        const parts = formatter.formatToParts(now);
+
+        let year = '';
+        let month = '';
+        let day = '';
+
+        for (const part of parts) {
+            if (part.type === 'year') year = part.value;
+            if (part.type === 'month') month = part.value;
+            if (part.type === 'day') day = part.value;
+        }
+
+        return `${year}-${month}-${day}`;
+    });
 
     const [errors, setErrors] = useState({});
 
@@ -118,14 +142,24 @@ export function TransactionForm(){
         }
 
         setErrors({});
-        
+
+        const selectedDate = new Date(date);
+        const now = new Date();
+        selectedDate.setHours(now.getHours());
+        selectedDate.setMinutes(now.getMinutes());
+        selectedDate.setSeconds(now.getSeconds());
+        selectedDate.setMilliseconds(now.getMilliseconds());
+
         const newTransaction = {
-            flow: flow,
-            name: name.trim(),
-            category: category,
+            id: sampleTransactions.length + 1,
+            item: name.trim(),
+            transactionDate: new Date(selectedDate), 
             amount: parseFloat(amount),
-            date: date, // Keep as YYYY-MM-DD string or convert to Date object if needed
+            flow: flow === 'Income' ? 2 : 1, 
+            category: category,
         };
+
+        sampleTransactions.push(newTransaction);
 
         console.log('Submitted Transaction:', newTransaction);
 
@@ -171,7 +205,7 @@ export function TransactionForm(){
                                         className='form-input'
                                         name = "category" 
                                         id = "transactionCategory"
-                                        value = {flow === 'Expense' ? '' : null}
+                                        value = {category}
                                         onChange = {(e) => setCategory(e.target.value)}>            
 
                                         <option value = '' disabled> Set Category </option>
